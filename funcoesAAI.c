@@ -9,6 +9,8 @@
 
 #include "bibliotecaAAI.h"
 
+int numeroSequencial = 0;
+
 void alternativaA()
 {
     int alternativaA;
@@ -21,7 +23,7 @@ void alternativaA()
     {
         if (alternativaA == 1)
         {
-            //chamar metodo inserção de cliente
+            cadastrarCliente();
         }
         else if (alternativaA == 2)
         {
@@ -138,46 +140,143 @@ void menu()
     while (op != 'D');
 }
 
-void cadastrarNome(cadastro1 *cliente)  //questao 3
+char* getNomeCliente()
 {
-    printf("\nNome do cliente: ");
-    fflush(stdin);
-    fgets(cliente->nome, 50, stdin);
+    char[50] = nome;
 
-    //validar por funcao recursiva
-    if (cliente->nome == )
+    printf("\nDigite o nome do cliente (maximo 50 caracteres): ");
+    fflush(stdin);
+    fgets(nome, 50, stdin);
+
+    return nome;
+}
+
+Data getDataNascimento()
+{
+    Data dataNascimento;
+    char[10] dataNascimentoStr;
+
+    do
     {
-        return 1;
+        printf("Digite a data de nascimento do cliente (DD/MM/YYYY):");
+        fflush(stdin);
+        fgets(dataNascimentoStr, 10, stdin);
+
+        dataNascimento.dia[0] = dataNascimentoStr[0];
+        dataNascimento.dia[1] = dataNascimentoStr[1];
+
+        dataNascimento.mes[0] = dataNascimentoStr[3];
+        dataNascimento.mes[1] = dataNascimentoStr[4];
+
+        dataNascimento.ano[0] = dataNascimentoStr[6];
+        dataNascimento.ano[1] = dataNascimentoStr[7];
+        dataNascimento.ano[2] = dataNascimentoStr[8];
+        dataNascimento.ano[3] = dataNascimentoStr[9];
+    }
+    while (dataNascimento.ano < "1920" || dataNascimento > "2002");
+
+    return dataNascimento;
+}
+
+Carro* setCarrosCliente(Cliente* cliente)
+{
+    cliente.qtdePlaca = 0;
+
+    for(int i = 0; i < 5; i++)
+    {
+        printf("Digite a placa (Ou 0 para sair):");
+        fflush(stdin);
+        fgets(cliente.carros.placa, 7, stdin);
+
+        if(cliente.carros.placa == "0")
+        {
+            break;
+        }
+
+        printf("Digite a marca/modelo:");
+        fflush(stdin);
+        fgets(cliente.carros.marcaModelo, 7, stdin);
+
+        do
+        {
+            printf("Digite o ano:");
+            fflush(stdin);
+            fgets(cliente.carros.ano, 4, stdin);
+
+            if(cliente.carros.ano < "1950")
+            {
+                printf("Ano invalido digite um ano anterior a 1950.");
+
+            }
+        }
+        while (cliente.carros.ano < "1950");
+
+        cliente.qtdePlaca++;
+    }
+}
+
+char getTipoContrato()
+{
+    char tipoContrato;
+
+    printf("Digite o tipo do contrato (D - diaria, P - parcial e M - mensal)");
+    scanf("%c", &tipoContrato);
+
+    return tipoContrato;
+}
+
+char* gerarCodigo(Cliente cliente)
+{
+    char[7] novoCodigo;
+
+    novoCodigo[0] = cliente.nome[0];
+
+    for(int i = 1 ; i <= 4; i++)
+    {
+        novoCodigo[i] = cliente.dtNascimento.ano[i - 1];
+    }
+
+    if(numeroSequencial < 10)
+    {
+        novoCodigo[5] = '0';
     }
     else
     {
-        return; //nao sei fazer funcao recursiva cm char
+        novoCodigo[5] = '' + (numeroSequencial / 10);
     }
+
+    novoCodigo[6] = '' + (numeroSequencial % 10);
+
+    return novoCodigo;
 }
 
-void gerarCodigo(cadastro1 *codigo)
+int calcularQuantidadePlacas(Cliente cliente)
 {
-    //tem q chamar:
-    codigo->codigo;
-    codigo->nome; //pegar so a 1 letra
-    codigo->dtNascimento; //pegar so o ano
-    //numero sequencia.
-    printf("Seu codigo: %");
-}
-void cadastrarIdade(dataNascVali *dataVali, cadastro1 *dataToda)
-{
-    char dataDigitada;
-    printf("digite sua idade no formato DD/MM/AAAA");
-    scanf(" %c", &dataDigitada);
-    dataToda = dataDigitada; //desmenbrar em DD / MM / AAAA
-    //validar data
-    dataVali->dia;
-    dataVali->mes;
-    dataVali->ano;
-    //tem que ser entre 18 e 100
+    int quantidadePlacas = 0;
+
+    do
+    {
+        quantidadePlacas++;
+    }
+    while(cliente.carros.proximo != NULL);
+
+    return quantidadePlacas;
 }
 
-void alternativaContrato(cadastro1 *contrato)
+void cadastrarCliente(Cliente cliente)
 {
+    Cliente novoCliente;
 
+    novoCliente.nome = getNomeCliente(); // OK - falta validacao 50 caracteres
+    novoCliente.dtNascimento = getDataNascimento(); // OK
+    novoCliente.codigo = gerarCodigo(novoCliente); // OK
+    novoCliente.tpContrato = getTipoContrato(); // OK
+    setCarrosCliente(&novoCliente); // Incompleto
+
+    while(cliente.proximo != NULL)
+    {
+        cliente = *(cliente.proximo);
+    }
+
+    cliente.proximo = &novoCliente;
 }
